@@ -1,0 +1,56 @@
+body {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0f2027, #2c5364, #24243e);
+  font-family: 'Inter', Arial, sans-serif;
+  padding: 40px;
+  margin: 0;
+}
+.container {
+  display: flex;
+  gap: 32px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.crypto-card {
+  position: relative;
+  width: 320px;
+  padding: 28px 24px 24px 24px;
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.10);
+  box-shadow: 0 4px 32px 0 rgba(0,0,0,0.14);
+  backdrop-filter: blur(18px);
+  border: 1.5px solid rgba(255,255,255,0.22);
+  overflow: hidden;
+  transition: transform .2s;
+}
+.crypto-card:hover {
+  transform: translateY(-8px) scale(1.03);
+  box-shadow: 0 8px 48px 0 rgba(0,0,0,0.22);
+}
+.crypto-card::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0; height: 3px;
+  border-radius: 24px 24px 0 0;
+  background: linear-gradient(90deg, #ffeb3b, #00e6ff, #e91e63, #ffeb3b);
+  background-size: 300% 100%;
+  animation: shimmer 4s linear infinite;
+  opacity: 0.85;
+  z-index: 2;
+}
+@keyframes shimmer {
+  0% { background-position: 0% 50%;}
+  100% { background-position: 100% 50%;}
+}
+.crypto-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 10px;
+  letter-spacing: 0.03em;
+}
+.crypto-desc {
+  color: #e0e0e0;
+  font-size: 1.05rem;
+  margin-bottom: 0;
+}
