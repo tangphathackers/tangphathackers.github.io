@@ -3,185 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CryptoVerse - Future of Finance</title>
+    <title>Trang Tải Xuống Hiện Đại</title>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <!-- Animated Background -->
-    <div class="animated-bg">
-        <div class="gradient-sphere sphere-1"></div>
-        <div class="gradient-sphere sphere-2"></div>
-        <div class="gradient-sphere sphere-3"></div>
+    <div class="container">
+        <header>
+            <h1>Kho Ứng Dụng & Hình Ảnh</h1>
+            <p>Tải xuống các tệp và hình ảnh một cách an toàn và nhanh chóng.</p>
+        </header>
+        <main id="app-grid">
+            <!-- Các ứng dụng và file sẽ được chèn vào đây bởi JavaScript -->
+        </main>
     </div>
-
-    <!-- Top Blur Border -->
-    <div class="blur-border top-border">
-        <div class="gradient-line"></div>
-    </div>
-
-    <!-- Navigation -->
-    <nav class="navbar glass-effect">
-        <div class="container">
-            <div class="nav-brand">
-                <span class="logo-icon">⚡</span>
-                <span class="logo-text">CryptoVerse</span>
-            </div>
-            <ul class="nav-menu">
-                <li><a href="#home" class="nav-link">Home</a></li>
-                <li><a href="#features" class="nav-link">Features</a></li>
-                <li><a href="#tokens" class="nav-link">Tokens</a></li>
-                <li><a href="#about" class="nav-link">About</a></li>
-            </ul>
-            <button class="wallet-btn glow-effect">
-                <span>Connect Wallet</span>
-            </button>
-            <div class="hamburger">
-                <span></span>
-                <span></span>
-                <span></span>
-            </div>
-        </div>
-    </nav>
-
-    <!-- Hero Section -->
-    <section class="hero" id="home">
-        <div class="container">
-            <div class="hero-content">
-                <h1 class="hero-title glitch" data-text="Welcome to CryptoVerse">
-                    Welcome to <span class="gradient-text">CryptoVerse</span>
-                </h1>
-                <p class="hero-subtitle">
-                    The Next Generation of Decentralized Finance
-                </p>
-                <div class="hero-buttons">
-                    <button class="btn-primary neon-border">
-                        <span>Start Trading</span>
-                    </button>
-                    <button class="btn-secondary glass-effect">
-                        <span>Learn More</span>
-                    </button>
-                </div>
-            </div>
-            <div class="hero-visual">
-                <div class="floating-card glass-effect">
-                    <div class="card-glow"></div>
-                    <div class="crypto-icon">₿</div>
-                    <div class="card-content">
-                        <h3>Bitcoin</h3>
-                        <p class="price">$43,567.89</p>
-                        <span class="change positive">+5.34%</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Features Section -->
-    <section class="features" id="features">
-        <div class="container">
-            <h2 class="section-title">
-                <span class="gradient-text">Core Features</span>
-            </h2>
-            <div class="features-grid">
-                <div class="feature-card glass-effect">
-                    <div class="feature-icon neon-border">🔒</div>
-                    <h3>Secure Trading</h3>
-                    <p>Military-grade encryption protects your assets</p>
-                </div>
-                <div class="feature-card glass-effect">
-                    <div class="feature-icon neon-border">⚡</div>
-                    <h3>Lightning Fast</h3>
-                    <p>Execute trades in milliseconds</p>
-                </div>
-                <div class="feature-card glass-effect">
-                    <div class="feature-icon neon-border">💎</div>
-                    <h3>Low Fees</h3>
-                    <p>Industry-leading low transaction fees</p>
-                </div>
-                <div class="feature-card glass-effect">
-                    <div class="feature-icon neon-border">🌐</div>
-                    <h3>Global Access</h3>
-                    <p>Trade from anywhere in the world</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Crypto Stats -->
-    <section class="crypto-stats" id="tokens">
-        <div class="container">
-            <h2 class="section-title">
-                <span class="gradient-text">Live Market</span>
-            </h2>
-            <div class="stats-grid">
-                <div class="stat-card glass-effect">
-                    <div class="stat-header">
-                        <span class="crypto-symbol">BTC</span>
-                        <span class="crypto-name">Bitcoin</span>
-                    </div>
-                    <div class="stat-price">$43,567.89</div>
-                    <div class="stat-change positive">↑ 5.34%</div>
-                    <canvas class="mini-chart" id="btc-chart"></canvas>
-                </div>
-                <div class="stat-card glass-effect">
-                    <div class="stat-header">
-                        <span class="crypto-symbol">ETH</span>
-                        <span class="crypto-name">Ethereum</span>
-                    </div>
-                    <div class="stat-price">$2,345.67</div>
-                    <div class="stat-change positive">↑ 3.21%</div>
-                    <canvas class="mini-chart" id="eth-chart"></canvas>
-                </div>
-                <div class="stat-card glass-effect">
-                    <div class="stat-header">
-                        <span class="crypto-symbol">BNB</span>
-                        <span class="crypto-name">Binance</span>
-                    </div>
-                    <div class="stat-price">$312.45</div>
-                    <div class="stat-change negative">↓ 1.23%</div>
-                    <canvas class="mini-chart" id="bnb-chart"></canvas>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer class="footer glass-effect">
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-brand">
-                    <h3>CryptoVerse</h3>
-                    <p>Your gateway to the future of finance</p>
-                </div>
-                <div class="footer-links">
-                    <h4>Quick Links</h4>
-                    <ul>
-                        <li><a href="#">About Us</a></li>
-                        <li><a href="#">Terms</a></li>
-                        <li><a href="#">Privacy</a></li>
-                    </ul>
-                </div>
-                <div class="footer-social">
-                    <h4>Connect</h4>
-                    <div class="social-icons">
-                        <a href="#" class="social-icon">📧</a>
-                        <a href="#" class="social-icon">🐦</a>
-                        <a href="#" class="social-icon">💬</a>
-                    </div>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <p>&copy; 2024 CryptoVerse. All rights reserved.</p>
-            </div>
-        </div>
-    </footer>
-
-    <!-- Bottom Blur Border -->
-    <div class="blur-border bottom-border">
-        <div class="gradient-line"></div>
-    </div>
-
     <script src="script.js"></script>
 </body>
-              </html>
+</html>
