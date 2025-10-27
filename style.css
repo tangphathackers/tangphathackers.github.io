@@ -1,729 +1,160 @@
-/* ========== Global Styles ========== */
+/* --- Biến CSS và Thiết lập cơ bản --- */
+:root {
+    --background-color: #0f0c29;
+    --card-background: rgba(255, 255, 255, 0.1);
+    --text-color: #f0f0f0;
+    --border-radius: 15px;
+    --blur-effect: blur(10px);
+}
+
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
-:root {
-    --primary-color: #00d4ff;
-    --secondary-color: #ff00ea;
-    --accent-color: #ffea00;
-    --dark-bg: #0a0a0a;
-    --card-bg: rgba(255, 255, 255, 0.03);
-    --text-primary: #ffffff;
-    --text-secondary: #a0a0a0;
-    --gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    --gradient-2: linear-gradient(135deg, #00d4ff 0%, #ff00ea 100%);
-    --gradient-3: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-}
-
 body {
-    font-family: 'Space Grotesk', sans-serif;
-    background: var(--dark-bg);
-    color: var(--text-primary);
-    overflow-x: hidden;
-    position: relative;
+    font-family: 'Roboto', sans-serif;
+    background: var(--background-color);
+    background: linear-gradient(to right, #24243e, #302b63, #0f0c29);
+    color: var(--text-color);
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
     min-height: 100vh;
+    padding: 40px 20px;
 }
 
+/* --- Container chính và Header --- */
 .container {
+    width: 100%;
     max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 20px;
+    text-align: center;
 }
 
-/* ========== Animated Background ========== */
-.animated-bg {
-    position: fixed;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
-    z-index: -1;
-    overflow: hidden;
-}
-
-.gradient-sphere {
-    position: absolute;
-    border-radius: 50%;
-    filter: blur(100px);
-    opacity: 0.4;
-    animation: float 15s infinite ease-in-out;
-}
-
-.sphere-1 {
-    width: 600px;
-    height: 600px;
-    background: var(--gradient-1);
-    top: -200px;
-    left: -200px;
-    animation-delay: 0s;
-}
-
-.sphere-2 {
-    width: 400px;
-    height: 400px;
-    background: var(--gradient-2);
-    bottom: -100px;
-    right: -100px;
-    animation-delay: 5s;
-}
-
-.sphere-3 {
-    width: 500px;
-    height: 500px;
-    background: var(--gradient-3);
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    animation-delay: 10s;
-}
-
-@keyframes float {
-    0%, 100% { transform: translate(0, 0) scale(1); }
-    33% { transform: translate(30px, -30px) scale(1.1); }
-    66% { transform: translate(-20px, 20px) scale(0.9); }
-}
-
-/* ========== Blur Borders with Animated Gradient ========== */
-.blur-border {
-    position: fixed;
-    width: 100%;
-    height: 150px;
-    pointer-events: none;
-    z-index: 1000;
-    overflow: hidden;
-}
-
-.top-border {
-    top: 0;
-    background: linear-gradient(to bottom, 
-        rgba(10, 10, 10, 1) 0%,
-        rgba(10, 10, 10, 0.8) 30%,
-        rgba(10, 10, 10, 0.4) 60%,
-        transparent 100%);
-    backdrop-filter: blur(10px);
-}
-
-.bottom-border {
-    bottom: 0;
-    background: linear-gradient(to top, 
-        rgba(10, 10, 10, 1) 0%,
-        rgba(10, 10, 10, 0.8) 30%,
-        rgba(10, 10, 10, 0.4) 60%,
-        transparent 100%);
-    backdrop-filter: blur(10px);
-}
-
-.gradient-line {
-    position: absolute;
-    width: 200%;
-    height: 3px;
-    background: linear-gradient(90deg, 
-        transparent,
-        var(--primary-color),
-        var(--secondary-color),
-        var(--accent-color),
-        var(--primary-color),
-        transparent);
-    animation: slide 8s linear infinite;
-}
-
-.top-border .gradient-line {
-    bottom: 0;
-}
-
-.bottom-border .gradient-line {
-    top: 0;
-}
-
-@keyframes slide {
-    0% { transform: translateX(-50%); }
-    100% { transform: translateX(0); }
-}
-
-/* ========== Glass Effect ========== */
-.glass-effect {
-    background: rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-}
-
-/* ========== Neon Border ========== */
-.neon-border {
-    position: relative;
-    overflow: hidden;
-}
-
-.neon-border::before {
-    content: '';
-    position: absolute;
-    top: -2px;
-    left: -2px;
-    right: -2px;
-    bottom: -2px;
-    background: linear-gradient(45deg, 
-        var(--primary-color), 
-        var(--secondary-color), 
-        var(--accent-color), 
-        var(--primary-color));
-    background-size: 400%;
-    z-index: -1;
-    filter: blur(5px);
-    animation: glowing 20s linear infinite;
-    opacity: 0.8;
-    transition: opacity 0.3s ease-in-out;
-    border-radius: inherit;
-}
-
-.neon-border:hover::before {
-    opacity: 1;
-}
-
-@keyframes glowing {
-    0% { background-position: 0 0; }
-    50% { background-position: 400% 0; }
-    100% { background-position: 0 0; }
-}
-
-/* ========== Navigation ========== */
-.navbar {
-    position: fixed;
-    top: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 90%;
-    max-width: 1200px;
-    padding: 20px 30px;
-    border-radius: 20px;
-    z-index: 999;
-    transition: all 0.3s ease;
-}
-
-.navbar .container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.nav-brand {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 1.5rem;
+header h1 {
+    font-size: 3em;
+    margin-bottom: 10px;
     font-weight: 700;
+    letter-spacing: 2px;
 }
 
-.logo-icon {
-    font-size: 2rem;
-    animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.1); }
-}
-
-.nav-menu {
-    display: flex;
-    list-style: none;
-    gap: 30px;
-}
-
-.nav-link {
-    color: var(--text-secondary);
-    text-decoration: none;
-    transition: all 0.3s ease;
-    position: relative;
-}
-
-.nav-link:hover {
-    color: var(--primary-color);
-}
-
-.nav-link::after {
-    content: '';
-    position: absolute;
-    bottom: -5px;
-    left: 0;
-    width: 0;
-    height: 2px;
-    background: var(--gradient-2);
-    transition: width 0.3s ease;
-}
-
-.nav-link:hover::after {
-    width: 100%;
-}
-
-.wallet-btn {
-    padding: 10px 25px;
-    background: var(--gradient-2);
-    border: none;
-    border-radius: 50px;
-    color: white;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    position: relative;
-    overflow: hidden;
-}
-
-.wallet-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 20px rgba(0, 212, 255, 0.3);
-}
-
-.hamburger {
-    display: none;
-    flex-direction: column;
-    cursor: pointer;
-}
-
-.hamburger span {
-    width: 25px;
-    height: 2px;
-    background: var(--text-primary);
-    margin: 3px 0;
-    transition: 0.3s;
-}
-
-/* ========== Hero Section ========== */
-.hero {
-    padding: 150px 0 100px;
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-}
-
-.hero .container {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 60px;
-    align-items: center;
-}
-
-.hero-title {
-    font-size: 3.5rem;
-    font-weight: 700;
-    margin-bottom: 20px;
-    line-height: 1.2;
-}
-
-.gradient-text {
-    background: var(--gradient-2);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-}
-
-.glitch {
-    position: relative;
-}
-
-.glitch::before,
-.glitch::after {
-    content: attr(data-text);
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    opacity: 0;
-}
-
-.glitch:hover::before {
-    animation: glitch-1 0.3s linear infinite;
-    color: var(--primary-color);
-    opacity: 0.8;
-}
-
-.glitch:hover::after {
-    animation: glitch-2 0.3s linear infinite;
-    color: var(--secondary-color);
-    opacity: 0.8;
-}
-
-@keyframes glitch-1 {
-    0%, 100% { clip-path: inset(0 0 0 0); }
-    25% { clip-path: inset(20% 0 40% 0); transform: translate(-2px, 2px); }
-    50% { clip-path: inset(60% 0 10% 0); transform: translate(2px, -2px); }
-    75% { clip-path: inset(0 0 70% 0); transform: translate(-1px, 1px); }
-}
-
-@keyframes glitch-2 {
-    0%, 100% { clip-path: inset(0 0 0 0); }
-    25% { clip-path: inset(50% 0 30% 0); transform: translate(2px, -1px); }
-    50% { clip-path: inset(20% 0 60% 0); transform: translate(-2px, 2px); }
-    75% { clip-path: inset(80% 0 5% 0); transform: translate(1px, -2px); }
-}
-
-.hero-subtitle {
-    font-size: 1.25rem;
-    color: var(--text-secondary);
+header p {
+    font-size: 1.2em;
     margin-bottom: 40px;
+    font-weight: 300;
 }
 
-.hero-buttons {
-    display: flex;
-    gap: 20px;
-}
-
-.btn-primary,
-.btn-secondary {
-    padding: 15px 35px;
-    border: none;
-    border-radius: 50px;
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.btn-primary {
-    background: var(--gradient-2);
-    color: white;
-}
-
-.btn-primary:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 15px 30px rgba(0, 212, 255, 0.4);
-}
-
-.btn-secondary {
-    background: transparent;
-    color: var(--text-primary);
-}
-
-.btn-secondary:hover {
-    background: rgba(255, 255, 255, 0.1);
-}
-
-/* ========== Floating Card ========== */
-.floating-card {
-    padding: 30px;
-    border-radius: 20px;
-    position: relative;
-    animation: float-card 6s ease-in-out infinite;
-}
-
-@keyframes float-card {
-    0%, 100% { transform: translateY(0) rotateX(0) rotateY(0); }
-    25% { transform: translateY(-20px) rotateX(5deg) rotateY(5deg); }
-    75% { transform: translateY(10px) rotateX(-5deg) rotateY(-5deg); }
-}
-
-.card-glow {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 100%;
-    height: 100%;
-    background: radial-gradient(circle, var(--primary-color), transparent);
-    filter: blur(60px);
-    opacity: 0.5;
-    transform: translate(-50%, -50%);
-    pointer-events: none;
-}
-
-.crypto-icon {
-    font-size: 3rem;
-    margin-bottom: 20px;
-    animation: rotate 10s linear infinite;
-}
-
-@keyframes rotate {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-}
-
-.card-content h3 {
-    font-size: 1.5rem;
-    margin-bottom: 10px;
-}
-
-.price {
-    font-size: 2rem;
-    font-weight: 700;
-    margin-bottom: 10px;
-}
-
-.change {
-    font-size: 1rem;
-    padding: 5px 10px;
-    border-radius: 20px;
-    display: inline-block;
-}
-
-.change.positive {
-    background: rgba(0, 255, 0, 0.1);
-    color: #00ff00;
-}
-
-.change.negative {
-    background: rgba(255, 0, 0, 0.1);
-    color: #ff0000;
-}
-
-/* ========== Features Section ========== */
-.features {
-    padding: 100px 0;
-}
-
-.section-title {
-    font-size: 2.5rem;
-    text-align: center;
-    margin-bottom: 60px;
-}
-
-.features-grid {
+/* --- Lưới chứa các mục tải xuống --- */
+#app-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 30px;
 }
 
-.feature-card {
-    padding: 40px 30px;
-    border-radius: 20px;
-    text-align: center;
-    transition: all 0.3s ease;
+/* --- Thẻ Glassmorphism với viền chuyển màu --- */
+.card {
     position: relative;
+    background: var(--card-background);
+    backdrop-filter: var(--blur-effect);
+    -webkit-backdrop-filter: var(--blur-effect);
+    border-radius: var(--border-radius);
+    padding: 25px;
+    text-align: center;
     overflow: hidden;
+    transition: transform 0.3s ease;
+    border: 1px solid transparent; /* Viền trong suốt ban đầu */
 }
 
-.feature-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: var(--gradient-2);
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    z-index: -1;
-}
-
-.feature-card:hover {
+.card:hover {
     transform: translateY(-10px);
 }
 
-.feature-card:hover::before {
-    opacity: 0.1;
+/* Hiệu ứng viền 7 màu chuyển động */
+.card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: var(--border-radius);
+    padding: 2px; 
+    background: conic-gradient(from var(--angle), #ff007f, #00ffcc, #ff9900, #cc00ff, #00ccff, #ff007f);
+    -webkit-mask: 
+        linear-gradient(#fff 0 0) content-box, 
+        linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    animation: rotate 4s linear infinite;
 }
 
-.feature-icon {
-    font-size: 3rem;
-    margin-bottom: 20px;
-    display: inline-block;
-    padding: 20px;
-    border-radius: 15px;
+/* Hiệu ứng mờ trên và dưới viền */
+.card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(to bottom, rgba(15, 12, 41, 0.8) 0%, transparent 20%, transparent 80%, rgba(15, 12, 41, 0.8) 100%);
+    pointer-events: none; /* Cho phép click xuyên qua lớp phủ */
 }
 
-.feature-card h3 {
-    font-size: 1.5rem;
-    margin-bottom: 15px;
+
+@property --angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
 }
 
-.feature-card p {
-    color: var(--text-secondary);
-    line-height: 1.6;
+@keyframes rotate {
+  to {
+    --angle: 360deg;
+  }
 }
 
-/* ========== Crypto Stats ========== */
-.crypto-stats {
-    padding: 100px 0;
+/* --- Nội dung trong thẻ --- */
+.card-content {
+    position: relative;
+    z-index: 2; /* Đảm bảo nội dung nằm trên hiệu ứng viền */
 }
 
-.stats-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 30px;
-}
-
-.stat-card {
-    padding: 30px;
-    border-radius: 20px;
-    transition: all 0.3s ease;
-}
-
-.stat-card:hover {
-    transform: scale(1.05);
-    box-shadow: 0 20px 40px rgba(0, 212, 255, 0.2);
-}
-
-.stat-header {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 20px;
-}
-
-.crypto-symbol {
-    font-weight: 700;
-    font-size: 1.2rem;
-}
-
-.crypto-name {
-    color: var(--text-secondary);
-}
-
-.stat-price {
-    font-size: 2rem;
-    font-weight: 700;
-    margin-bottom: 10px;
-}
-
-.stat-change {
-    font-size: 1.1rem;
-    margin-bottom: 20px;
-}
-
-.mini-chart {
-    width: 100%;
+.card-image {
+    width: 100px;
     height: 100px;
-    border-radius: 10px;
-}
-
-/* ========== Footer ========== */
-.footer {
-    padding: 50px 0 30px;
-    margin-top: 100px;
-    border-radius: 30px 30px 0 0;
-}
-
-.footer-content {
-    display: grid;
-    grid-template-columns: 2fr 1fr 1fr;
-    gap: 40px;
-    margin-bottom: 30px;
-}
-
-.footer-brand h3 {
-    font-size: 1.8rem;
-    margin-bottom: 15px;
-}
-
-.footer-brand p {
-    color: var(--text-secondary);
-}
-
-.footer-links h4,
-.footer-social h4 {
-    margin-bottom: 20px;
-}
-
-.footer-links ul {
-    list-style: none;
-}
-
-.footer-links li {
-    margin-bottom: 10px;
-}
-
-.footer-links a {
-    color: var(--text-secondary);
-    text-decoration: none;
-    transition: color 0.3s ease;
-}
-
-.footer-links a:hover {
-    color: var(--primary-color);
-}
-
-.social-icons {
-    display: flex;
-    gap: 15px;
-}
-
-.social-icon {
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: rgba(255, 255, 255, 0.05);
+    object-fit: cover;
     border-radius: 50%;
+    margin-bottom: 20px;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+}
+
+.card-title {
+    font-size: 1.5em;
+    margin-bottom: 10px;
+    font-weight: 700;
+}
+
+.card-description {
+    font-size: 0.9em;
+    margin-bottom: 20px;
+    font-weight: 300;
+    min-height: 40px;
+}
+
+/* --- Nút tải xuống --- */
+.download-btn {
+    display: inline-block;
+    background-color: #7b2cbf;
+    color: var(--text-color);
     text-decoration: none;
-    font-size: 1.2rem;
-    transition: all 0.3s ease;
+    padding: 12px 25px;
+    border-radius: 25px;
+    font-weight: 700;
+    transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
-.social-icon:hover {
-    background: var(--gradient-2);
-    transform: translateY(-3px);
-}
-
-.footer-bottom {
-    text-align: center;
-    padding-top: 30px;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    color: var(--text-secondary);
-}
-
-/* ========== Responsive Design ========== */
-@media (max-width: 768px) {
-    .nav-menu {
-        display: none;
+.download-btn:hover {
+    background-color: #9d4edd;
+    transform: scale(1.05);
     }
-    
-    .hamburger {
-        display: flex;
-    }
-    
-    .hero .container {
-        grid-template-columns: 1fr;
-    }
-    
-    .hero-title {
-        font-size: 2.5rem;
-    }
-    
-    .hero-visual {
-        margin-top: 50px;
-    }
-    
-    .footer-content {
-        grid-template-columns: 1fr;
-    }
-    
-    .features-grid,
-    .stats-grid {
-        grid-template-columns: 1fr;
-    }
-}
-
-@media (max-width: 480px) {
-    .hero-title {
-        font-size: 2rem;
-    }
-    
-    .hero-buttons {
-        flex-direction: column;
-    }
-    
-    .btn-primary,
-    .btn-secondary {
-        width: 100%;
-    }
-  }  animation: shimmer 4s linear infinite;
-  opacity: 0.85;
-  z-index: 2;
-}
-@keyframes shimmer {
-  0% { background-position: 0% 50%;}
-  100% { background-position: 100% 50%;}
-}
-.crypto-title {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: #fff;
-  margin-bottom: 10px;
-  letter-spacing: 0.03em;
-}
-.crypto-desc {
-  color: #e0e0e0;
-  font-size: 1.05rem;
-  margin-bottom: 0;
-}
