@@ -3,22 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trang Tải Xuống Hiện Đại</title>
+    <title>Cổng Thông Tin Tải Xuống</title>
     <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
 </head>
 <body>
+
     <div class="container">
         <header>
-            <h1>Kho Ứng Dụng & Hình Ảnh</h1>
-            <p>Tải xuống các tệp và hình ảnh một cách an toàn và nhanh chóng.</p>
+            <div class="logo">
+                <i class="fa-solid fa-rocket"></i>
+                <h1>AppPortal</h1>
+            </div>
+            <p>Giải pháp tải xuống an toàn cho doanh nghiệp của bạn.</p>
         </header>
+
+        <div class="controls">
+            <div class="filter-container">
+                <nav id="filter-buttons">
+                    <!-- Các nút lọc sẽ được JS chèn vào đây -->
+                </nav>
+            </div>
+            <div class="search-container">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="search" id="search-input" placeholder="Tìm kiếm theo tên hoặc mô tả...">
+            </div>
+        </div>
+
         <main id="app-grid">
             <!-- Các ứng dụng và file sẽ được chèn vào đây bởi JavaScript -->
         </main>
+
+        <footer>
+            <p>&copy; 2025 Your Company. All Rights Reserved.</p>
+        </footer>
     </div>
+
     <script src="script.js"></script>
 </body>
 </html>
