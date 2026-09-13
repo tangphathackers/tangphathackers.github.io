@@ -1,68 +1,135 @@
 /**
- * NGHỊCH THỦY HÀN MOBILE - DAMAGE CALCULATION ENGINE & SUITE
- * Tích hợp: LocalStorage Persistence, Multi-profile, Baseline Comparison & URL Share
+ * NGHỊCH THỦY HÀN MOBILE - SMART DAMAGE CALCULATION ENGINE
+ * Cập nhật: Phân Tích Nhãn Kỹ Năng Đơn/Nhóm/Bùng Nổ/Duy Trì, Min-Max Attack, Bão Hòa Crit 938
  */
 
-// 1. Hệ thống Hằng Số Cốt Lõi
 const SYSTEM_CONSTANTS = {
-    ARMOR: 2860,            // Hằng số giảm thương giáp: 2860 / (Giáp + 2860)
-    ELEMENT_RES: 530,       // Hằng số giảm thương nguyên tố: 530 / (Kháng + 530)
-    CRIT_CURVE: 938,        // Hằng số đường cong bạo kích: (1.15 * X) / (X + 938)
-    SUPPRESSION_MIN: 0.65,  // Chặn đáy khắc phái (nhận tối thiểu 65% ST)
-    SUPPRESSION_MAX: 1.25   // Chặn trần khắc phái (khuếch đại tối đa 125%)
+    ARMOR: 2860,            // Hộ giáp: 2860 / (Giáp + 2860)
+    ELEMENT_RES: 530,       // Kháng nguyên tố: 530 / (Kháng + 530)
+    CRIT_CURVE: 938,        // Đường cong chí mạng: (1.15 * X) / (X + 938)
+    SUPPRESSION_MIN: 0.65,  // Chặn đáy khắc phái (65%)
+    SUPPRESSION_MAX: 1.25   // Chặn trần khắc phái (125%)
 };
 
-// 2. Danh mục Input Fields để Save/Load
 const FORM_FIELDS = [
-    'atk_base', 'atk_skill', 'atk_defbreak', 'atk_ignore_def_pct', 'atk_element',
-    'atk_element_penetration', 'atk_crit', 'atk_crit_dmg_pct', 'atk_hit',
-    'atk_boss_slayer', 'atk_shield_break', 'def_armor', 'def_elem_res',
-    'def_crit_res', 'def_block', 'def_boss_res', 'def_qi_shield',
-    'def_perfect_block_pct', 'def_dmg_reduction_pct', 'mul_skill_pct',
-    'mul_boss_pct', 'mul_enhance_pct', 'mul_indep1_pct', 'mul_indep2_pct'
+    'atk_min', 'atk_max', 'atk_base', 'atk_skill', 'atk_defbreak', 'atk_ignore_def_pct',
+    'atk_element', 'atk_element_penetration', 'atk_crit', 'atk_crit_dmg_pct', 'atk_hit',
+    'atk_boss_slayer', 'atk_shield_break', 'def_armor', 'def_elem_res', 'def_crit_res',
+    'def_block', 'def_boss_res', 'def_qi_shield', 'def_perfect_block_pct',
+    'def_crit_reduction_pct', 'def_dmg_reduction_pct', 'mul_skill_pct', 'mul_boss_pct',
+    'mul_enhance_pct', 'mul_single_pct', 'mul_aoe_pct', 'mul_burst_pct', 'mul_dot_pct',
+    'mul_indep1_pct'
 ];
 
-// 3. Presets Mục Tiêu Chuẩn Thực Tế
 const PRESETS = {
     target_131_heroic: {
         def_armor: 5550, def_elem_res: 76, def_crit_res: 1098, def_block: 900,
-        def_boss_res: 3000, def_qi_shield: 586, def_perfect_block_pct: 0, def_dmg_reduction_pct: 0
+        def_boss_res: 3000, def_qi_shield: 586, def_perfect_block_pct: 0,
+        def_crit_reduction_pct: 0, def_dmg_reduction_pct: 0
     },
     target_132_heroic: {
         def_armor: 5550, def_elem_res: 80, def_crit_res: 1200, def_block: 1050,
-        def_boss_res: 3300, def_qi_shield: 600, def_perfect_block_pct: 0, def_dmg_reduction_pct: 0
+        def_boss_res: 3300, def_qi_shield: 600, def_perfect_block_pct: 0,
+        def_crit_reduction_pct: 0, def_dmg_reduction_pct: 0
     },
     target_pvp_tank_4piece: {
         def_armor: 5200, def_elem_res: 650, def_crit_res: 1600, def_block: 900,
-        def_boss_res: 2800, def_qi_shield: 3000, def_perfect_block_pct: 5, def_dmg_reduction_pct: 10
+        def_boss_res: 2800, def_qi_shield: 3000, def_perfect_block_pct: 5,
+        def_crit_reduction_pct: 10, def_dmg_reduction_pct: 10
     },
     target_pvp_tank_6piece: {
         def_armor: 5860, def_elem_res: 750, def_crit_res: 1800, def_block: 950,
-        def_boss_res: 4200, def_qi_shield: 3800, def_perfect_block_pct: 10, def_dmg_reduction_pct: 15
+        def_boss_res: 4200, def_qi_shield: 3800, def_perfect_block_pct: 10,
+        def_crit_reduction_pct: 15, def_dmg_reduction_pct: 15
     },
     target_pvp_squishy: {
         def_armor: 2800, def_elem_res: 120, def_crit_res: 700, def_block: 600,
-        def_boss_res: 500, def_qi_shield: 1200, def_perfect_block_pct: 0, def_dmg_reduction_pct: 0
+        def_boss_res: 500, def_qi_shield: 1200, def_perfect_block_pct: 0,
+        def_crit_reduction_pct: 0, def_dmg_reduction_pct: 0
     }
 };
 
-// Biến lưu mốc so sánh (Baseline Comparison)
 let baselineDamage = null;
 let lastCalculatedResult = null;
 
-// ==========================================
-// THUẬT TOÁN TÍNH TOÁN SÁT THƯƠNG CHÍNH
-// ==========================================
+/**
+ * Xử lý khi thay đổi chế độ Nhãn Kỹ Năng Thông Minh
+ */
+function onSkillModeChange(mode) {
+    const manualGroup = document.getElementById('manual_tags_group');
+    if (mode === 'custom') {
+        manualGroup.style.display = 'flex';
+    } else {
+        manualGroup.style.display = 'none';
+    }
+    runEngine();
+}
+
+/**
+ * Tính toán tỷ lệ % tăng cường kỹ năng thực tế dựa vào Tags
+ */
+function calculateEffectiveSkillEnhance() {
+    const mode = document.getElementById('skill_preset_mode').value;
+    const enhance_base = parseFloat(document.getElementById('mul_enhance_pct').value) || 0;
+    const single = parseFloat(document.getElementById('mul_single_pct').value) || 0;
+    const aoe = parseFloat(document.getElementById('mul_aoe_pct').value) || 0;
+    const burst = parseFloat(document.getElementById('mul_burst_pct').value) || 0;
+    const dot = parseFloat(document.getElementById('mul_dot_pct').value) || 0;
+
+    let totalBonus = enhance_base;
+
+    switch (mode) {
+        case 'single_burst':
+            totalBonus += single + burst;
+            break;
+        case 'single_dot':
+            totalBonus += single + dot;
+            break;
+        case 'aoe_burst':
+            totalBonus += aoe + burst;
+            break;
+        case 'aoe_dot':
+            totalBonus += aoe + dot;
+            break;
+        case 'rotation':
+            // Mô phỏng chuỗi xoay tua phó bản PvE: 60% sát thương từ chiêu Đơn, 40% từ chiêu Nhóm; 50% Bùng nổ, 50% Duy trì
+            totalBonus += (single * 0.60 + aoe * 0.40) + (burst * 0.50 + dot * 0.50);
+            break;
+        case 'custom':
+            const isSingle = document.getElementById('tag_target_single').checked;
+            const isBurst = document.getElementById('tag_type_burst').checked;
+            totalBonus += (isSingle ? single : aoe) + (isBurst ? burst : dot);
+            break;
+    }
+
+    return totalBonus;
+}
+
+function onAtkMinMaxChange() {
+    const min = parseFloat(document.getElementById('atk_min').value) || 0;
+    const max = parseFloat(document.getElementById('atk_max').value) || min;
+    const avg = Math.round((min + max) / 2);
+    document.getElementById('atk_base').value = avg;
+    runEngine();
+}
+
 function runEngine() {
-    // 1. Nhận dữ liệu đầu vào
-    const atk_base = parseFloat(document.getElementById('atk_base').value) || 0;
+    const atk_min = parseFloat(document.getElementById('atk_min').value) || 0;
+    const atk_max = parseFloat(document.getElementById('atk_max').value) || atk_min;
+    const atk_base = (atk_min + atk_max) / 2;
+    document.getElementById('atk_base').value = Math.round(atk_base);
+
     const atk_skill = parseFloat(document.getElementById('atk_skill').value) || 0;
     const atk_defbreak = parseFloat(document.getElementById('atk_defbreak').value) || 0;
     const atk_ignore_def_pct = (parseFloat(document.getElementById('atk_ignore_def_pct').value) || 0) / 100;
     const atk_element = parseFloat(document.getElementById('atk_element').value) || 0;
     const atk_element_penetration = parseFloat(document.getElementById('atk_element_penetration').value) || 0;
     const atk_crit = parseFloat(document.getElementById('atk_crit').value) || 0;
-    const atk_crit_dmg_pct = (parseFloat(document.getElementById('atk_crit_dmg_pct').value) || 150) / 100;
+    
+    const raw_crit_dmg = parseFloat(document.getElementById('atk_crit_dmg_pct').value) || 150;
+    const def_crit_red = parseFloat(document.getElementById('def_crit_reduction_pct').value) || 0;
+    const effective_crit_dmg_pct = Math.max(raw_crit_dmg - def_crit_red, 150) / 100;
+
     const atk_hit = parseFloat(document.getElementById('atk_hit').value) || 0;
     const atk_boss_slayer = parseFloat(document.getElementById('atk_boss_slayer').value) || 0;
     const atk_shield_break = parseFloat(document.getElementById('atk_shield_break').value) || 0;
@@ -78,11 +145,12 @@ function runEngine() {
 
     const mul_skill_pct = (parseFloat(document.getElementById('mul_skill_pct').value) || 100) / 100;
     const mul_boss_pct = (parseFloat(document.getElementById('mul_boss_pct').value) || 0) / 100;
-    const mul_enhance_pct = (parseFloat(document.getElementById('mul_enhance_pct').value) || 0) / 100;
     const mul_indep1_pct = (parseFloat(document.getElementById('mul_indep1_pct').value) || 0) / 100;
-    const mul_indep2_pct = (parseFloat(document.getElementById('mul_indep2_pct').value) || 0) / 100;
 
-    // 2. Khấu trừ Phòng ngự
+    // TÍNH TOÁN HIỆU QUẢ TĂNG CƯỜNG KỸ NĂNG THEO TAGS
+    const effective_enhance_pct = calculateEffectiveSkillEnhance() / 100;
+
+    // 1. Khấu trừ Phòng ngự
     const rem_armor = Math.max(def_armor * (1 - atk_ignore_def_pct) - atk_defbreak, 0);
     const rem_elem_res = Math.max(def_elem_res - atk_element_penetration, 0);
 
@@ -90,30 +158,37 @@ function runEngine() {
     const qi_floor = 0.5 * (def_qi_shield - atk_shield_break);
     rem_qi_shield = Math.max(rem_qi_shield, qi_floor, 0);
 
-    // 3. Tỷ lệ giảm thương
+    // 2. Tỷ lệ giảm thương
     const dr_phys = SYSTEM_CONSTANTS.ARMOR / (rem_armor + SYSTEM_CONSTANTS.ARMOR);
     const dr_elem = SYSTEM_CONSTANTS.ELEMENT_RES / (rem_elem_res + SYSTEM_CONSTANTS.ELEMENT_RES);
 
-    // 4. Sát thương cơ bản
-    const effective_phys_atk = Math.max(atk_skill + atk_base + atk_boss_slayer - def_boss_res - rem_qi_shield, 0);
-    const phys_base_dmg = effective_phys_atk * dr_phys;
-    const elem_base_dmg = atk_element * dr_elem;
-    const total_base_dmg = phys_base_dmg + elem_base_dmg;
+    // 3. Sát thương cơ bản 3 luồng
+    const calcBaseDamage = (atk_val) => {
+        const eff_atk = Math.max(atk_skill + atk_val + atk_boss_slayer - def_boss_res - rem_qi_shield, 0);
+        const p_dmg = eff_atk * dr_phys;
+        const e_dmg = atk_element * dr_elem;
+        return { total: p_dmg + e_dmg, p_dmg, e_dmg };
+    };
 
-    // 5. Hệ số khuếch đại & Chặn biên độ Khắc Phái [65% - 125%]
+    const base_min = calcBaseDamage(atk_min);
+    const base_max = calcBaseDamage(atk_max);
+    const base_avg = calcBaseDamage(atk_base);
+
+    // 4. Hệ số khuếch đại (Đã tích hợp Nhãn Kỹ Năng)
     let suppression_factor = 1 + mul_boss_pct;
     suppression_factor = Math.min(Math.max(suppression_factor, SYSTEM_CONSTANTS.SUPPRESSION_MIN), SYSTEM_CONSTANTS.SUPPRESSION_MAX);
 
     const total_multiplier = mul_skill_pct *
         suppression_factor *
-        (1 + mul_enhance_pct) *
+        (1 + effective_enhance_pct) *
         (1 + mul_indep1_pct) *
-        (1 + mul_indep2_pct) *
         (1 - def_dmg_reduction_pct);
 
-    const scaled_total_dmg = total_base_dmg * total_multiplier;
+    const scaled_min = base_min.total * total_multiplier;
+    const scaled_max = base_max.total * total_multiplier;
+    const scaled_avg = base_avg.total * total_multiplier;
 
-    // 6. Chí Mạng và Xác Suất Trúng Nâng Cao
+    // 5. Tỷ lệ bạo kích và tỷ lệ trúng
     const rem_crit = Math.max(atk_crit - def_crit_res, 0);
     const crit_rate = Math.min((1.15 * rem_crit) / (rem_crit + SYSTEM_CONSTANTS.CRIT_CURVE), 1.0);
 
@@ -128,54 +203,47 @@ function runEngine() {
         hit_rate = Math.max(0.92 - (penalty / 1500) * 0.75, 0.10);
     }
 
-    // 7. Các kịch bản và Sát thương kỳ vọng cuối cùng
-    const dmg_normal = scaled_total_dmg;
-    const dmg_crit = scaled_total_dmg * atk_crit_dmg_pct;
-    const dmg_blocked = scaled_total_dmg * 0.5 * (1 - def_perfect_block_pct);
-
-    const hit_factor = 1 + (crit_rate * (atk_crit_dmg_pct - 1));
+    // 6. Đầu ra kết quả
+    const hit_factor = 1 + (crit_rate * (effective_crit_dmg_pct - 1));
     const block_factor = 0.5 * (1 - def_perfect_block_pct);
-    const expected_dmg = scaled_total_dmg * ((hit_rate * hit_factor) + ((1 - hit_rate) * block_factor));
+    const expected_dmg = scaled_avg * ((hit_rate * hit_factor) + ((1 - hit_rate) * block_factor));
 
-    // Lưu kết quả phục vụ xuất báo cáo
     lastCalculatedResult = {
         expected_dmg: Math.round(expected_dmg),
-        dmg_normal: Math.round(dmg_normal),
-        dmg_crit: Math.round(dmg_crit),
-        dmg_blocked: Math.round(dmg_blocked),
+        hit_min: Math.round(scaled_min),
+        hit_max: Math.round(scaled_max),
+        crit_min: Math.round(scaled_min * effective_crit_dmg_pct),
+        crit_max: Math.round(scaled_max * effective_crit_dmg_pct),
+        dmg_blocked: Math.round(scaled_avg * block_factor),
         crit_rate: (crit_rate * 100).toFixed(2),
         hit_rate: (hit_rate * 100).toFixed(2),
-        elem_share: total_base_dmg > 0 ? (elem_base_dmg / total_base_dmg * 100).toFixed(1) : 0
+        effective_enhance: (effective_enhance_pct * 100).toFixed(1),
+        elem_share: base_avg.total > 0 ? (base_avg.e_dmg / base_avg.total * 100).toFixed(1) : 0
     };
 
-    // 8. Cập nhật DOM
+    // 7. Cập nhật giao diện
     document.getElementById('display_expected_dmg').innerText = lastCalculatedResult.expected_dmg.toLocaleString('vi-VN');
-    document.getElementById('display_hit_normal').innerText = lastCalculatedResult.dmg_normal.toLocaleString('vi-VN');
-    document.getElementById('display_hit_crit').innerText = lastCalculatedResult.dmg_crit.toLocaleString('vi-VN');
+    document.getElementById('display_hit_minmax').innerText = `${lastCalculatedResult.hit_min.toLocaleString('vi-VN')} - ${lastCalculatedResult.hit_max.toLocaleString('vi-VN')}`;
+    document.getElementById('display_crit_minmax').innerText = `${lastCalculatedResult.crit_min.toLocaleString('vi-VN')} - ${lastCalculatedResult.crit_max.toLocaleString('vi-VN')}`;
     document.getElementById('display_hit_blocked').innerText = lastCalculatedResult.dmg_blocked.toLocaleString('vi-VN');
+    
     document.getElementById('display_crit_rate').innerText = lastCalculatedResult.crit_rate + '%';
     document.getElementById('display_hit_rate').innerText = lastCalculatedResult.hit_rate + '%';
+    document.getElementById('display_effective_enhance').innerText = '+' + lastCalculatedResult.effective_enhance + '%';
     document.getElementById('display_dr_phys').innerText = ((1 - dr_phys) * 100).toFixed(1) + '%';
-    document.getElementById('display_dr_elem').innerText = ((1 - dr_elem) * 100).toFixed(1) + '%';
     document.getElementById('display_elem_share').innerText = lastCalculatedResult.elem_share + '%';
 
-    // Cập nhật chênh lệch So sánh (nếu có Baseline)
     updateComparisonDisplay(lastCalculatedResult.expected_dmg);
 
-    // Chẩn đoán thông minh
     renderSmartDiagnostics({
         hit_rate, diff_hit, atk_hit, def_block, def_elem_res, atk_element_penetration,
         rem_elem_res, atk_element, dr_elem, total_multiplier, rem_armor, def_armor,
         crit_rate, atk_boss_slayer, def_boss_res
     });
 
-    // Auto-save vào bộ nhớ tạm
     autoSaveCurrentInputs();
 }
 
-// ==========================================
-// CHẨN ĐOÁN THÔNG MINH (SMART DIAGNOSTICS)
-// ==========================================
 function renderSmartDiagnostics(data) {
     const container = document.getElementById('display_diagnostics');
     let items = [];
@@ -184,8 +252,8 @@ function renderSmartDiagnostics(data) {
         const gap = data.def_boss_res - data.atk_boss_slayer;
         items.push(`
             <li class="advisor-item">
-                <span class="tag-badge tag-danger">LỖ HỔNG LỰC TAY</span>
-                <span>Khắc Boss/Phái (${data.atk_boss_slayer}) thấp hơn Kháng đối thủ (${data.def_boss_res}). Bạn đang bị trừ trực tiếp <strong>${gap} điểm Nội/Ngoại công</strong> trước giáp.</span>
+                <span class="tag-badge tag-danger">LỖ HỔNG KHẮC BOSS</span>
+                <span>Khắc quái (${data.atk_boss_slayer}) thấp hơn Kháng của mục tiêu (${data.def_boss_res}). Bạn đang bị trừ trực tiếp <strong>${gap} điểm Nội/Ngoại công</strong> trước khi tính giáp! Hãy ưu tiên lắp Đặc chất Khắc Boss.</span>
             </li>
         `);
     }
@@ -194,15 +262,8 @@ function renderSmartDiagnostics(data) {
         const lostDmg = Math.round(data.atk_element * (1 - data.dr_elem) * data.total_multiplier);
         items.push(`
             <li class="advisor-item">
-                <span class="tag-badge tag-danger">THỦNG XUYÊN KHÁNG</span>
-                <span>Mục tiêu còn ${data.rem_elem_res} Kháng NT chưa trừ. Bạn đang mất khoảng <strong>${lostDmg.toLocaleString('vi-VN')} ST Nguyên tố</strong>. Cần bù đủ ${data.def_elem_res} Xuyên Kháng.</span>
-            </li>
-        `);
-    } else if (data.atk_element_penetration > data.def_elem_res && data.def_elem_res > 0) {
-        items.push(`
-            <li class="advisor-item">
-                <span class="tag-badge tag-warning">THỪA XUYÊN KHÁNG</span>
-                <span>Xuyên Kháng NT (${data.atk_element_penetration}) vượt quá Kháng của mục tiêu (${data.def_elem_res}). Điểm thừa không giúp giảm âm kháng.</span>
+                <span class="tag-badge tag-danger">THỦNG XUYÊN KHÁNG NT</span>
+                <span>Mục tiêu còn ${data.rem_elem_res} Kháng NT. Bạn đang thất thoát khoảng <strong>${lostDmg.toLocaleString('vi-VN')} ST Nguyên tố</strong>. Chỉ cần khảm thêm ${data.def_elem_res} Xuyên Kháng NT là ăn trọn 100% dame chuẩn!</span>
             </li>
         `);
     }
@@ -212,14 +273,7 @@ function renderSmartDiagnostics(data) {
         items.push(`
             <li class="advisor-item">
                 <span class="tag-badge tag-warning">THỪA CHÍNH XÁC</span>
-                <span>Bạn đang thừa khoảng <strong>${excess} điểm Chính xác</strong> (đã đạt 100% trúng). Hãy tẩy bớt sang Chí Mạng hoặc Tấn Công để tối ưu DPS.</span>
-            </li>
-        `);
-    } else if (data.hit_rate < 0.98) {
-        items.push(`
-            <li class="advisor-item">
-                <span class="tag-badge tag-danger">THIẾU CHÍNH XÁC</span>
-                <span>Tỷ lệ trúng chỉ đạt ${(data.hit_rate * 100).toFixed(1)}%. Đòn bị Đỡ đòn sẽ bị chia đôi sát thương và không thể nổ Crit.</span>
+                <span>Bạn đang thừa khoảng <strong>${excess} điểm Chính xác</strong> (đã đạt 100% trúng). Hãy tẩy bớt điểm Thân Pháp hoặc dòng Chính xác sang Chí Mạng hoặc Tấn Công.</span>
             </li>
         `);
     }
@@ -228,7 +282,7 @@ function renderSmartDiagnostics(data) {
         items.push(`
             <li class="advisor-item">
                 <span class="tag-badge tag-warning">CHƯA QUA NGƯỠNG PHÁ PHÒNG</span>
-                <span>Giáp địch còn lại ${Math.round(data.rem_armor)} (giảm hơn 50% ST vật lý). Nếu theo nhánh Phá Phòng, cần đẩy Phá phòng vượt mốc <strong>${Math.round(data.def_armor - 2860)}</strong> để bắt đầu có lãi.</span>
+                <span>Giáp địch còn ${Math.round(data.rem_armor)} (giảm hơn 50% ST vật lý). Nếu bạn đang chơi hệ Thuần Nguyên Tố, hãy giữ nguyên và bỏ qua Phá phòng.</span>
             </li>
         `);
     }
@@ -236,15 +290,8 @@ function renderSmartDiagnostics(data) {
     if (data.crit_rate >= 0.65 && data.crit_rate <= 0.76) {
         items.push(`
             <li class="advisor-item">
-                <span class="tag-badge tag-success">TỶ LỆ CRIT LÝ TƯỞNG</span>
-                <span>Crit Rate đạt ${(data.crit_rate * 100).toFixed(1)}% (vùng vàng 65% - 75%). Đạt điểm cân bằng tối ưu, không bị hao phí vào đường cong 938.</span>
-            </li>
-        `);
-    } else if (data.crit_rate < 0.55) {
-        items.push(`
-            <li class="advisor-item">
-                <span class="tag-badge tag-warning">CHÍ MẠNG THẤP</span>
-                <span>Tỷ lệ bạo kích chỉ đạt ${(data.crit_rate * 100).toFixed(1)}%. Hãy ưu tiên tăng thêm Chí Mạng để xoay chiêu ổn định.</span>
+                <span class="tag-badge tag-success">TỶ LỆ CRIT VÀNG</span>
+                <span>Crit Rate đạt ${(data.crit_rate * 100).toFixed(1)}% (vùng tối ưu 65% - 75%). Đạt điểm cân bằng hoàn hảo, không bị bão hòa vào đường cong 938.</span>
             </li>
         `);
     }
@@ -252,13 +299,11 @@ function renderSmartDiagnostics(data) {
     container.innerHTML = `<ul class="advisor-list">${items.join('')}</ul>`;
 }
 
-// ==========================================
-// TÍNH NĂNG TIỆN ÍCH: SO SÁNH BUILD A vs B
-// ==========================================
+// CÁC HÀM TIỆN ÍCH PROFILE & SO SÁNH
 function setBaselineForCompare() {
     if (!lastCalculatedResult) return;
     baselineDamage = lastCalculatedResult.expected_dmg;
-    document.getElementById('compare_status_text').innerHTML = `Đang ghim mốc chuẩn: <strong>${baselineDamage.toLocaleString('vi-VN')} ST</strong>. Hãy thay đổi chỉ số trang bị bên trên để xem biến động!`;
+    document.getElementById('compare_status_text').innerHTML = `Đang ghim mốc chuẩn: <strong>${baselineDamage.toLocaleString('vi-VN')} ST</strong>. Hãy đổi đồ để xem chênh lệch!`;
     document.getElementById('btn_clear_baseline').style.display = 'inline-block';
     updateComparisonDisplay(baselineDamage);
     showToast('Đã ghim mốc chuẩn A thành công!');
@@ -295,15 +340,13 @@ function updateComparisonDisplay(currentDmg) {
     }
 }
 
-// ==========================================
-// TÍNH NĂNG TIỆN ÍCH: QUẢN LÝ HỒ SƠ (PROFILES)
-// ==========================================
 function getFormData() {
     let data = {};
     FORM_FIELDS.forEach(id => {
         const el = document.getElementById(id);
         if (el) data[id] = parseFloat(el.value) || 0;
     });
+    data['skill_preset_mode'] = document.getElementById('skill_preset_mode').value;
     return data;
 }
 
@@ -315,12 +358,16 @@ function setFormData(data) {
             if (el) el.value = data[id];
         }
     });
-    runEngine();
+    if (data['skill_preset_mode']) {
+        document.getElementById('skill_preset_mode').value = data['skill_preset_mode'];
+        onSkillModeChange(data['skill_preset_mode']);
+    }
+    onAtkMinMaxChange();
 }
 
 function getStoredProfiles() {
     try {
-        return JSON.parse(localStorage.getItem('NTH_SAVED_PROFILES')) || {};
+        return JSON.parse(localStorage.getItem('NTH_PROFILES_V3')) || {};
     } catch (e) {
         return {};
     }
@@ -341,13 +388,13 @@ function updateProfileDropdown(selectedName = '') {
 }
 
 function promptSaveProfile() {
-    const name = prompt('Nhập tên hồ sơ cần lưu (VD: PvE Vĩnh Dạ 1.3, PvP Semi):');
+    const name = prompt('Nhập tên hồ sơ (VD: Tố Vấn PvE 1.3, Băng Hỏa Test):');
     if (!name || !name.trim()) return;
 
     const trimmed = name.trim();
     const profiles = getStoredProfiles();
     profiles[trimmed] = getFormData();
-    localStorage.setItem('NTH_SAVED_PROFILES', JSON.stringify(profiles));
+    localStorage.setItem('NTH_PROFILES_V3', JSON.stringify(profiles));
     updateProfileDropdown(trimmed);
     showToast(`Đã lưu hồ sơ "${trimmed}"!`);
 }
@@ -365,51 +412,57 @@ function deleteCurrentProfile() {
     const select = document.getElementById('profile_select');
     const name = select.value;
     if (!name) {
-        alert('Vui lòng chọn một hồ sơ trong danh sách để xóa!');
+        alert('Vui lòng chọn một hồ sơ để xóa!');
         return;
     }
 
-    if (confirm(`Bạn có chắc chắn muốn xóa hồ sơ "${name}" không?`)) {
+    if (confirm(`Bạn có chắc muốn xóa hồ sơ "${name}"?`)) {
         const profiles = getStoredProfiles();
         delete profiles[name];
-        localStorage.setItem('NTH_SAVED_PROFILES', JSON.stringify(profiles));
+        localStorage.setItem('NTH_PROFILES_V3', JSON.stringify(profiles));
         updateProfileDropdown();
         showToast(`Đã xóa hồ sơ "${name}"!`);
     }
 }
 
 function autoSaveCurrentInputs() {
-    localStorage.setItem('NTH_LAST_SESSION', JSON.stringify(getFormData()));
+    localStorage.setItem('NTH_SESSION_V3', JSON.stringify(getFormData()));
 }
 
 function resetToDefaults() {
-    if (confirm('Khôi phục toàn bộ bảng tính về số liệu ban đầu?')) {
+    if (confirm('Khôi phục toàn bộ dữ liệu từ ảnh chụp cấp 69 của bạn?')) {
         loadPreset('target_131_heroic');
-        document.getElementById('atk_base').value = 6008;
-        document.getElementById('atk_defbreak').value = 2045;
-        document.getElementById('atk_element').value = 2418;
-        document.getElementById('atk_crit').value = 2034;
-        document.getElementById('atk_hit').value = 1235;
-        document.getElementById('atk_boss_slayer').value = 3000;
-        document.getElementById('atk_element_penetration').value = 0;
-        runEngine();
-        showToast('Đã đặt lại dữ liệu mặc định.');
+        document.getElementById('atk_min').value = 6000;
+        document.getElementById('atk_max').value = 6800;
+        document.getElementById('atk_defbreak').value = 1634;
+        document.getElementById('atk_element').value = 3096;
+        document.getElementById('atk_crit').value = 2073;
+        document.getElementById('atk_crit_dmg_pct').value = 192.4;
+        document.getElementById('atk_hit').value = 1425;
+        document.getElementById('atk_boss_slayer').value = 1311;
+        document.getElementById('atk_shield_break').value = 744;
+        document.getElementById('mul_boss_pct').value = 23.2;
+        document.getElementById('mul_enhance_pct').value = 3.0;
+        document.getElementById('mul_single_pct').value = 12.0;
+        document.getElementById('mul_aoe_pct').value = 0.0;
+        document.getElementById('mul_burst_pct').value = 0.0;
+        document.getElementById('mul_dot_pct').value = 0.0;
+        document.getElementById('skill_preset_mode').value = 'single_burst';
+        onSkillModeChange('single_burst');
+        onAtkMinMaxChange();
+        showToast('Đã khôi phục dữ liệu ban đầu.');
     }
 }
 
-// ==========================================
-// TÍNH NĂNG TIỆN ÍCH: CHIA SẺ LINK & BACKUP
-// ==========================================
 function shareBuildUrl() {
     const data = getFormData();
-    const jsonStr = JSON.stringify(data);
-    const encoded = btoa(encodeURIComponent(jsonStr));
+    const encoded = btoa(encodeURIComponent(JSON.stringify(data)));
     const shareUrl = `${window.location.origin}${window.location.pathname}#build=${encoded}`;
 
     navigator.clipboard.writeText(shareUrl).then(() => {
         showToast('🔗 Đã sao chép link chia sẻ vào bộ nhớ đệm!');
     }).catch(() => {
-        prompt('Copy link chia sẻ dưới đây:', shareUrl);
+        prompt('Copy link chia sẻ:', shareUrl);
     });
 }
 
@@ -417,13 +470,12 @@ function checkUrlHashBuild() {
     if (window.location.hash.startsWith('#build=')) {
         try {
             const raw = window.location.hash.replace('#build=', '');
-            const decoded = decodeURIComponent(atob(raw));
-            const data = JSON.parse(decoded);
+            const data = JSON.parse(decodeURIComponent(atob(raw)));
             setFormData(data);
-            showToast('⚡ Đã nạp thành công bộ chỉ số từ đường link chia sẻ!');
+            showToast('⚡ Đã nạp thành công build từ đường link!');
             return true;
         } catch (e) {
-            console.error('Lỗi khi nạp build từ hash URL:', e);
+            console.error(e);
         }
     }
     return false;
@@ -432,7 +484,7 @@ function checkUrlHashBuild() {
 function exportProfilesJson() {
     const exportData = {
         app: "NTH_Damage_Engine",
-        version: "1.3.2",
+        version: "1.3.2_Enhanced",
         exported_at: new Date().toISOString(),
         current_build: getFormData(),
         saved_profiles: getStoredProfiles()
@@ -442,10 +494,10 @@ function exportProfilesJson() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `NTH_Builds_Backup_${new Date().toLocaleDateString('vi-VN').replace(/\//g, '-')}.json`;
+    a.download = `NTH_Builds_${new Date().toLocaleDateString('vi-VN').replace(/\//g, '-')}.json`;
     a.click();
     URL.revokeObjectURL(url);
-    showToast('Đã xuất file backup JSON thành công!');
+    showToast('Đã xuất file JSON thành công!');
 }
 
 function importProfilesJson(event) {
@@ -459,35 +511,37 @@ function importProfilesJson(event) {
             if (imported.saved_profiles) {
                 const current = getStoredProfiles();
                 const merged = Object.assign({}, current, imported.saved_profiles);
-                localStorage.setItem('NTH_SAVED_PROFILES', JSON.stringify(merged));
+                localStorage.setItem('NTH_PROFILES_V3', JSON.stringify(merged));
                 updateProfileDropdown();
             }
             if (imported.current_build) {
                 setFormData(imported.current_build);
             }
-            showToast('Đã nạp file backup JSON thành công!');
+            showToast('Đã nạp file JSON thành công!');
         } catch (err) {
-            alert('File JSON không hợp lệ hoặc bị lỗi định dạng!');
+            alert('File JSON không hợp lệ!');
         }
     };
     reader.readAsText(file);
-    event.target.value = ''; // Reset input
+    event.target.value = '';
 }
 
 function copyReportText() {
     if (!lastCalculatedResult) return;
+    const mode = document.getElementById('skill_preset_mode').value;
     const report = 
 `📊 [BÁO CÁO SÁT THƯƠNG NGHỊCH THỦY HÀN]
+• Chế Độ Test: ${mode}
 • ST Kỳ Vọng: ${lastCalculatedResult.expected_dmg.toLocaleString('vi-VN')}
-• Đòn Thường: ${lastCalculatedResult.dmg_normal.toLocaleString('vi-VN')}
-• Nổ Bạo Kích: ${lastCalculatedResult.dmg_crit.toLocaleString('vi-VN')}
-• Bị Đỡ Đòn: ${lastCalculatedResult.dmg_blocked.toLocaleString('vi-VN')}
+• Đòn Trúng (Min - Max): ${lastCalculatedResult.hit_min.toLocaleString('vi-VN')} - ${lastCalculatedResult.hit_max.toLocaleString('vi-VN')}
+• Nổ Bạo Kích (Min - Max): ${lastCalculatedResult.crit_min.toLocaleString('vi-VN')} - ${lastCalculatedResult.crit_max.toLocaleString('vi-VN')}
+• Tăng Cường KN Hiệu Lực: +${lastCalculatedResult.effective_enhance}%
 • Tỷ Lệ Bạo Kích: ${lastCalculatedResult.crit_rate}%
-• Tỷ Lệ Đánh Trúng: ${lastCalculatedResult.hit_rate}%
+• Tỷ Lệ Trúng Đòn: ${lastCalculatedResult.hit_rate}%
 • Tỷ Trọng Nguyên Tố: ${lastCalculatedResult.elem_share}%`;
 
     navigator.clipboard.writeText(report).then(() => {
-        showToast('📋 Đã copy bản tóm tắt vào bộ nhớ đệm!');
+        showToast('📋 Đã copy bản tóm tắt báo cáo!');
     });
 }
 
@@ -513,21 +567,16 @@ function loadPreset(key) {
     runEngine();
 }
 
-// Khởi chạy khi nạp trang
 window.onload = function() {
     updateProfileDropdown();
-
-    // 1. Kiểm tra nếu mở từ link chia sẻ
     const loadedFromUrl = checkUrlHashBuild();
-
-    // 2. Nếu không có link chia sẻ, khôi phục session gần nhất
     if (!loadedFromUrl) {
         try {
-            const lastSession = JSON.parse(localStorage.getItem('NTH_LAST_SESSION'));
+            const lastSession = JSON.parse(localStorage.getItem('NTH_SESSION_V3'));
             if (lastSession) setFormData(lastSession);
-            else runEngine();
+            else onAtkMinMaxChange();
         } catch (e) {
-            runEngine();
+            onAtkMinMaxChange();
         }
     }
 };

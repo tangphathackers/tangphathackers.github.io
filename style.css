@@ -1,8 +1,8 @@
 :root {
-    --bg-base: #0a0e14;
-    --bg-surface: #121820;
-    --bg-card: #18222e;
-    --border-subtle: #243447;
+    --bg-base: #090d13;
+    --bg-surface: #111720;
+    --bg-card: #17212d;
+    --border-subtle: #223246;
     --border-focus: #38bdf8;
     
     --c-cyan: #38bdf8;
@@ -34,7 +34,6 @@ body {
     margin: 0 auto;
 }
 
-/* Header */
 .main-header {
     text-align: center;
     margin-bottom: 18px;
@@ -54,7 +53,6 @@ body {
     color: var(--text-secondary);
 }
 
-/* Utility Bar (Lưu trữ, Chia sẻ, Backup) */
 .utility-bar {
     background: var(--bg-surface);
     border: 1px solid var(--border-subtle);
@@ -90,14 +88,12 @@ select {
     font-size: 0.85rem;
     outline: none;
     cursor: pointer;
-    max-width: 220px;
 }
 
 select:focus {
     border-color: var(--c-cyan);
 }
 
-/* Nút bấm chung */
 .btn {
     border: 1px solid var(--border-subtle);
     background: var(--bg-card);
@@ -137,7 +133,6 @@ select:focus {
     background: #1a2533;
 }
 
-/* Presets */
 .preset-section {
     background: var(--bg-surface);
     border: 1px solid var(--border-subtle);
@@ -186,7 +181,6 @@ select:focus {
     font-weight: 600;
 }
 
-/* Grid Layout */
 .calculator-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
@@ -231,9 +225,48 @@ select:focus {
     font-size: 0.87rem;
 }
 
+.input-field-dual {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 10px;
+    background: #131d27;
+    padding: 8px;
+    border-radius: 6px;
+}
+
+.field-col {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.field-col label {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+.field-col input {
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    color: var(--text-primary);
+    border-radius: 4px;
+    padding: 6px 10px;
+    text-align: right;
+    outline: none;
+    font-size: 0.9rem;
+    width: 100%;
+}
+
 .input-field label {
     color: var(--text-secondary);
     flex: 1;
+}
+
+.hint {
+    font-size: 0.75rem;
+    color: var(--c-cyan);
+    opacity: 0.85;
 }
 
 .input-field input {
@@ -249,13 +282,63 @@ select:focus {
     transition: border-color 0.2s;
 }
 
-.input-field input:focus {
+.input-field input:focus, .field-col input:focus {
     border-color: var(--border-focus);
+}
+
+.input-readonly {
+    background: #1e2836 !important;
+    color: var(--c-gold) !important;
+    font-weight: 700;
 }
 
 .highlight-blue input { border-left: 3px solid var(--c-cyan); }
 .highlight-red input { border-left: 3px solid var(--c-red); }
 .highlight-gold input { border-left: 3px solid var(--c-gold); }
+
+/* Smart Tag Box */
+.smart-tag-box {
+    background: #152230;
+    border: 1px solid #23384f;
+    border-radius: 6px;
+    padding: 10px 12px;
+    margin-bottom: 14px;
+}
+
+.smart-tag-title {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--c-cyan);
+    margin-bottom: 6px;
+}
+
+.smart-tag-box select {
+    width: 100%;
+    margin-bottom: 8px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+}
+
+.tag-checkbox-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+    padding-top: 4px;
+}
+
+.tag-checkbox-group label {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+}
+
+.separator {
+    color: var(--border-subtle);
+    margin: 0 4px;
+}
 
 .btn-refresh {
     width: 100%;
@@ -275,7 +358,6 @@ select:focus {
     background: #1d4ed8;
 }
 
-/* Results Dashboard */
 .results-dashboard {
     background: var(--bg-surface);
     border: 1px solid var(--border-subtle);
@@ -322,17 +404,9 @@ select:focus {
     border-radius: 4px;
 }
 
-.diff-positive {
-    background: rgba(16, 185, 129, 0.18);
-    color: var(--c-green);
-}
+.diff-positive { background: rgba(16, 185, 129, 0.18); color: var(--c-green); }
+.diff-negative { background: rgba(239, 68, 68, 0.18); color: var(--c-red); }
 
-.diff-negative {
-    background: rgba(239, 68, 68, 0.18);
-    color: var(--c-red);
-}
-
-/* Compare Control Bar */
 .compare-control-bar {
     background: #151f2c;
     border: 1px dashed var(--border-subtle);
@@ -368,7 +442,6 @@ select:focus {
     border-color: var(--c-red);
 }
 
-/* Metrics Grid */
 .metrics-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -397,11 +470,10 @@ select:focus {
 }
 
 .m-val {
-    font-size: 1.1rem;
+    font-size: 1.05rem;
     font-weight: 700;
 }
 
-/* Diagnostics Box */
 .advisor-box {
     background: #141c26;
     border: 1px solid var(--border-subtle);
@@ -448,7 +520,6 @@ select:focus {
 .tag-danger { background: rgba(239, 68, 68, 0.15); color: var(--c-red); }
 .tag-success { background: rgba(16, 185, 129, 0.15); color: var(--c-green); }
 
-/* Toast Notifications */
 .toast {
     position: fixed;
     bottom: 24px;
