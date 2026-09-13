@@ -3,16 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nghịch Thủy Hàn Mobile - Bộ Tính Sát Thương & Tối Ưu Hóa Build</title>
+    <title>Nghịch Thủy Hàn Mobile - Bộ Tính Sát Thương & Thẩm Định Build</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <div class="app-wrapper">
+    <!-- HEADER -->
     <header class="main-header">
         <div class="header-content">
-            <h1>NGHỊCH THỦY HÀN MOBILE • DAMAGE ENGINE</h1>
-            <p class="subtitle">Mô phỏng toán học: Tấn Công Min - Max, Nhãn Kỹ Năng Thông Minh (Đơn/Nhóm/Bùng Nổ/Duy Trì), Bão Hòa Crit 938</p>
+            <h1>NGHỊCH THỦY HÀN MOBILE • DAMAGE & TANK SUITE</h1>
+            <p class="subtitle">Mô phỏng toán học: Boss 1.3.1 - 1.3.3, Thẩm Định Tank EHP, Hiệu Chỉnh Sai Lệch DPS Cọc & Quản Lý Hồ Sơ</p>
         </div>
     </header>
 
@@ -37,13 +38,15 @@
 
     <!-- THANH PRESET MỤC TIÊU -->
     <section class="preset-section">
-        <div class="preset-label">MỤC TIÊU TEST DAME:</div>
+        <div class="preset-label">MỤC TIÊU TEST & PRESET BUILD:</div>
         <div class="preset-buttons">
             <button class="btn-preset active" onclick="loadPreset('target_131_heroic')">Cọc 1.3.1 Heroic</button>
             <button class="btn-preset" onclick="loadPreset('target_132_heroic')">Boss 1.3.2 Vĩnh Dạ</button>
-            <button class="btn-preset" onclick="loadPreset('target_pvp_tank_4piece')">PvP: Tanker 4 Món (2k8 Kháng)</button>
-            <button class="btn-preset" onclick="loadPreset('target_pvp_tank_6piece')">PvP: Tanker 6 Món (4k2 Kháng)</button>
-            <button class="btn-preset" onclick="loadPreset('target_pvp_squishy')">PvP: Mục Tiêu Máu Giấy</button>
+            <button class="btn-preset" onclick="loadPreset('target_133_heroic')">Boss 1.3.3 Thần Vực</button>
+            <button class="btn-preset btn-preset-tank" onclick="loadPreset('build_tank_thiety')">🛡️ Mẫu Thiết Y Thuần Thủ</button>
+            <button class="btn-preset btn-preset-tank" onclick="loadPreset('build_tank_tovan')">🌿 Mẫu Tố Vấn Heal/Tank</button>
+            <button class="btn-preset" onclick="loadPreset('target_pvp_tank_4piece')">PvP: Địch 4 Món (2k8 Kháng)</button>
+            <button class="btn-preset" onclick="loadPreset('target_pvp_tank_6piece')">PvP: Địch 6 Món (4k2 Kháng)</button>
         </div>
     </section>
 
@@ -58,11 +61,11 @@
             <div class="panel-body">
                 <div class="input-field-dual highlight-blue">
                     <div class="field-col">
-                        <label for="atk_min">Nội/Ngoại Công Min: <span class="hint">[Tab TC - Dòng 1]</span></label>
+                        <label for="atk_min">Nội/Ngoại Công Min: <span class="hint">[Tab TC]</span></label>
                         <input type="number" id="atk_min" value="6000" oninput="onAtkMinMaxChange()">
                     </div>
                     <div class="field-col">
-                        <label for="atk_max">Nội/Ngoại Công Max: <span class="hint">[Tab TC - Dòng 1]</span></label>
+                        <label for="atk_max">Nội/Ngoại Công Max: <span class="hint">[Tab TC]</span></label>
                         <input type="number" id="atk_max" value="6800" oninput="onAtkMinMaxChange()">
                     </div>
                 </div>
@@ -71,53 +74,53 @@
                     <input type="number" id="atk_base" value="6400" readonly class="input-readonly">
                 </div>
                 <div class="input-field">
-                    <label for="atk_skill">Lực Tấn Công Kỹ Năng: <span class="hint">[Điểm cộng phẳng]</span></label>
+                    <label for="atk_skill">Lực Tấn Công Kỹ Năng: <span class="hint">[Số phẳng]</span></label>
                     <input type="number" id="atk_skill" value="0" oninput="runEngine()">
                 </div>
                 <div class="input-field highlight-blue">
-                    <label for="atk_defbreak">Phá Phòng (Armor Break): <span class="hint">[Dòng Phá Phòng]</span></label>
+                    <label for="atk_defbreak">Phá Phòng (Armor Break):</label>
                     <input type="number" id="atk_defbreak" value="1634" oninput="runEngine()">
                 </div>
                 <div class="input-field">
-                    <label for="atk_ignore_def_pct">% Bỏ Qua Phòng Thủ (%): <span class="hint">[Long Ngâm 8%]</span></label>
+                    <label for="atk_ignore_def_pct">% Bỏ Qua Phòng Thủ (%):</label>
                     <input type="number" id="atk_ignore_def_pct" value="0" step="0.1" oninput="runEngine()">
                 </div>
                 <div class="input-field highlight-blue">
-                    <label for="atk_element">Tấn Công Nguyên Tố: <span class="hint">[Dòng Nguyên Tố]</span></label>
+                    <label for="atk_element">Tấn Công Nguyên Tố:</label>
                     <input type="number" id="atk_element" value="3096" oninput="runEngine()">
                 </div>
                 <div class="input-field highlight-blue">
-                    <label for="atk_element_penetration">Xuyên Kháng Nguyên Tố: <span class="hint">[Dòng Xuyên Kháng]</span></label>
+                    <label for="atk_element_penetration">Xuyên Kháng Nguyên Tố:</label>
                     <input type="number" id="atk_element_penetration" value="0" oninput="runEngine()">
                 </div>
                 <div class="input-field">
-                    <label for="atk_crit">Chí Mạng (Crit Point): <span class="hint">[Dòng Chí Mạng]</span></label>
+                    <label for="atk_crit">Chí Mạng (Crit Point):</label>
                     <input type="number" id="atk_crit" value="2073" oninput="runEngine()">
                 </div>
                 <div class="input-field">
-                    <label for="atk_crit_dmg_pct">Sát Thương Chí Mạng (%): <span class="hint">[Dòng ST Chí Mạng]</span></label>
+                    <label for="atk_crit_dmg_pct">Sát Thương Chí Mạng (%):</label>
                     <input type="number" id="atk_crit_dmg_pct" value="192.4" step="0.1" oninput="runEngine()">
                 </div>
                 <div class="input-field">
-                    <label for="atk_hit">Chính Xác (Accuracy): <span class="hint">[Dòng Chính Xác]</span></label>
+                    <label for="atk_hit">Chính Xác (Accuracy):</label>
                     <input type="number" id="atk_hit" value="1425" oninput="runEngine()">
                 </div>
                 <div class="input-field">
-                    <label for="atk_boss_slayer">Khắc Boss/Phái (Điểm): <span class="hint">[Số trước dòng Khắc Quái]</span></label>
+                    <label for="atk_boss_slayer">Khắc Boss/Phái (Điểm):</label>
                     <input type="number" id="atk_boss_slayer" value="1311" oninput="runEngine()">
                 </div>
                 <div class="input-field">
-                    <label for="atk_shield_break">Phá Khiên (Shield Break): <span class="hint">[Dòng Phá Khiên]</span></label>
+                    <label for="atk_shield_break">Phá Khiên (Shield Break):</label>
                     <input type="number" id="atk_shield_break" value="744" oninput="runEngine()">
                 </div>
             </div>
         </div>
 
-        <!-- CỘT 2: PHE MỤC TIÊU -->
+        <!-- CỘT 2: PHE MỤC TIÊU / PHÒNG THỦ -->
         <div class="panel panel-defender">
             <div class="panel-header">
                 <span class="icon">🛡️</span>
-                <h2>Phe Mục Tiêu (Bị Đánh)</h2>
+                <h2>Phe Mục Tiêu / Chỉ Số Thủ Của Bạn</h2>
             </div>
             <div class="panel-body">
                 <div class="input-field highlight-red">
@@ -144,6 +147,10 @@
                     <label for="def_qi_shield">Khiên Khí / Khí Thuẫn:</label>
                     <input type="number" id="def_qi_shield" value="586" oninput="runEngine()">
                 </div>
+                <div class="input-field highlight-red">
+                    <label for="def_hp">Khí Huyết (Máu/HP): <span class="hint">[Để tính EHP]</span></label>
+                    <input type="number" id="def_hp" value="128083" oninput="runEngine()">
+                </div>
                 <div class="input-field">
                     <label for="def_perfect_block_pct">% Chống Đỡ Hoàn Mỹ (%):</label>
                     <input type="number" id="def_perfect_block_pct" value="0" step="0.5" oninput="runEngine()">
@@ -159,11 +166,11 @@
             </div>
         </div>
 
-        <!-- CỘT 3: TĂNG CƯỜNG KỸ NĂNG & NHÃN THÔNG MINH -->
+        <!-- CỘT 3: TĂNG CƯỜNG KỸ NĂNG & HIỆU CHỈNH SAI LỆCH -->
         <div class="panel panel-multipliers">
             <div class="panel-header">
                 <span class="icon">⚡</span>
-                <h2>Nhãn Kỹ Năng & Hệ Số Buff</h2>
+                <h2>Nhãn Kỹ Năng & Hiệu Chỉnh DPS</h2>
             </div>
             <div class="panel-body">
                 <!-- BỘ CHỌN NHÃN KỸ NĂNG THÔNG MINH -->
@@ -187,7 +194,7 @@
                     </div>
                 </div>
 
-                <!-- 5 Ô NHẬP TĂNG CƯỜNG KỸ NĂNG Y HỆT TRONG ẢNH -->
+                <!-- 5 Ô NHẬP TĂNG CƯỜNG KỸ NĂNG -->
                 <div class="input-field">
                     <label for="mul_enhance_pct">Tăng Cường Kỹ Năng (Chung %):</label>
                     <input type="number" id="mul_enhance_pct" value="3.0" step="0.1" oninput="runEngine()">
@@ -223,6 +230,28 @@
                     <input type="number" id="mul_indep1_pct" value="0" step="0.5" oninput="runEngine()">
                 </div>
 
+                <!-- MODULE HIỆU CHỈNH SAI LỆCH DPS CỌC (TÙY CHỈNH NỘI CÔNG / THỰC TẾ) -->
+                <div class="calibration-box">
+                    <div class="calib-header">
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="calib_enable" onchange="onToggleCalibration()">
+                            <span class="slider"></span>
+                        </label>
+                        <span class="calib-title">BẬT HIỆU CHỈNH SAI LỆCH CỌC</span>
+                    </div>
+                    <div id="calib_inputs" style="display: none;">
+                        <p class="calib-desc">Bù trừ độ lệch do hiệu ứng nội tại nội công (Nhật Nguyệt, Côn Ngô, Đoạn Kim Qua...) hoặc nhịp dồn Tuyệt kỹ.</p>
+                        <div class="input-field">
+                            <label for="calib_actual_dps">DPS Thực Tế Test Cọc (kDPS):</label>
+                            <input type="number" id="calib_actual_dps" placeholder="VD: 180" step="1" oninput="onActualDpsInput()">
+                        </div>
+                        <div class="input-field">
+                            <label for="calib_offset_kdps">Hoặc Nhập Sai Lệch (± kDPS):</label>
+                            <input type="number" id="calib_offset_kdps" value="0" step="1" oninput="onOffsetInput()">
+                        </div>
+                    </div>
+                </div>
+
                 <div class="panel-action">
                     <button class="btn-refresh" onclick="runEngine()">🔄 CẬP NHẬT KẾT QUẢ</button>
                 </div>
@@ -234,11 +263,12 @@
     <section class="results-dashboard">
         <div class="hero-metric-card">
             <div class="hero-title">
-                <h3>SÁT THƯƠNG KỲ VỌNG TRUNG BÌNH (EXPECTED DAMAGE)</h3>
-                <p>Đã tính toán theo Nhãn Kỹ Năng, đòn đánh Min - Max, xác suất Trúng, Bị Đỡ và Bạo Kích 938</p>
+                <h3>SÁT THƯƠNG KỲ VỌNG TRUNG BÌNH (EXPECTED DAMAGE / DPS)</h3>
+                <p>Mô phỏng đòn đánh Min - Max, xác suất Trúng, Bị Đỡ và Bạo Kích 938</p>
             </div>
             <div class="hero-result-group">
                 <div class="hero-value" id="display_expected_dmg">0</div>
+                <div class="calib-badge" id="display_calib_badge" style="display: none;">ĐÃ BÙ: +0 kDPS</div>
                 <div class="diff-badge" id="display_diff_dmg" style="display: none;">+0 (+0%)</div>
             </div>
         </div>
@@ -255,7 +285,7 @@
             </div>
         </div>
 
-        <!-- CÁC CHỈ SỐ THÀNH PHẦN (MIN - MAX - CRIT) -->
+        <!-- CÁC CHỈ SỐ THÀNH PHẦN (MIN - MAX - CRIT - TANK METRICS) -->
         <div class="metrics-grid">
             <div class="metric-box">
                 <span class="m-label">Đòn Trúng Min - Max</span>
@@ -278,16 +308,33 @@
                 <span class="m-val" id="display_hit_rate">0%</span>
             </div>
             <div class="metric-box">
-                <span class="m-label">% Hiệu Lực Tăng Cường KN</span>
-                <span class="m-val" id="display_effective_enhance">0%</span>
-            </div>
-            <div class="metric-box">
                 <span class="m-label">% Giảm Thương Giáp Địch</span>
                 <span class="m-val" id="display_dr_phys">0%</span>
             </div>
             <div class="metric-box">
+                <span class="m-label">% Giảm Thương Nguyên Tố</span>
+                <span class="m-val" id="display_dr_elem">0%</span>
+            </div>
+            <div class="metric-box">
                 <span class="m-label">Tỷ Trọng ST Nguyên Tố</span>
                 <span class="m-val" id="display_elem_share">0%</span>
+            </div>
+            <!-- CHỈ SỐ CHUYÊN DỤNG CHO TANK & THỦ -->
+            <div class="metric-box m-tank">
+                <span class="m-label">Máu Hiệu Dụng (EHP Vật Lý)</span>
+                <span class="m-val" id="display_ehp_phys">0</span>
+            </div>
+            <div class="metric-box m-tank">
+                <span class="m-label">Máu Hiệu Dụng (EHP Nguyên Tố)</span>
+                <span class="m-val" id="display_ehp_elem">0</span>
+            </div>
+            <div class="metric-box m-tank">
+                <span class="m-label">% Kháng Crit Đối Phương</span>
+                <span class="m-val" id="display_crit_suppressed">0%</span>
+            </div>
+            <div class="metric-box m-tank">
+                <span class="m-label">Khả Năng Chống Sốc Dame</span>
+                <span class="m-val" id="display_tank_rating">Cân Bằng</span>
             </div>
         </div>
 
