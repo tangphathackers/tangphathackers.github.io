@@ -3,45 +3,263 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cổng Thông Tin Tải Xuống</title>
+    <title>Nghịch Thủy Hàn Mobile - Bộ Tính Sát Thương & Tối Ưu Build</title>
     <link rel="stylesheet" href="style.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
 </head>
 <body>
 
-    <div class="container">
-        <header>
-            <div class="logo">
-                <i class="fa-solid fa-rocket"></i>
-                <h1>AppPortal</h1>
-            </div>
-            <p>Giải pháp tải xuống an toàn cho doanh nghiệp của bạn.</p>
-        </header>
+<div class="app-wrapper">
+    <!-- HEADER -->
+    <header class="main-header">
+        <div class="header-content">
+            <h1>NGHỊCH THỦY HÀN MOBILE • DAMAGE ENGINE</h1>
+            <p class="subtitle">Mô phỏng toán học: Xuyên Giáp 2860, Kháng NT 530, Bão Hòa Chí Mạng 938 & Quản Lý Hồ Sơ</p>
+        </div>
+    </header>
 
-        <div class="controls">
-            <div class="filter-container">
-                <nav id="filter-buttons">
-                    <!-- Các nút lọc sẽ được JS chèn vào đây -->
-                </nav>
+    <!-- THANH TIỆN ÍCH & QUẢN LÝ HỒ SƠ (PROFILE MANAGER) -->
+    <section class="utility-bar">
+        <div class="profile-controls">
+            <span class="u-label">Hồ Sơ Của Bạn:</span>
+            <select id="profile_select" onchange="onSelectProfile(this.value)">
+                <option value="">-- Chọn hồ sơ đã lưu --</option>
+            </select>
+            <button class="btn btn-action" onclick="promptSaveProfile()">💾 Lưu Build Mới</button>
+            <button class="btn btn-action btn-danger" onclick="deleteCurrentProfile()">🗑️ Xóa</button>
+        </div>
+        <div class="quick-tools">
+            <button class="btn btn-tool" onclick="shareBuildUrl()" title="Tạo link chia sẻ cho bạn bè">🔗 Chia Sẻ Link</button>
+            <button class="btn btn-tool" onclick="exportProfilesJson()" title="Tải file backup về máy">📤 Xuất JSON</button>
+            <button class="btn btn-tool" onclick="document.getElementById('import_file').click()" title="Nạp file backup từ máy">📥 Nhập JSON</button>
+            <input type="file" id="import_file" style="display: none;" accept=".json" onchange="importProfilesJson(event)">
+            <button class="btn btn-tool" onclick="resetToDefaults()" title="Xóa trắng về mặc định">🔄 Đặt Lại</button>
+        </div>
+    </section>
+
+    <!-- THANH PRESET MẪU -->
+    <section class="preset-section">
+        <div class="preset-label">MỤC TIÊU THỰC CHIẾN:</div>
+        <div class="preset-buttons">
+            <button class="btn-preset active" onclick="loadPreset('target_131_heroic')">Cọc 1.3.1 Heroic</button>
+            <button class="btn-preset" onclick="loadPreset('target_132_heroic')">Boss 1.3.2 Vĩnh Dạ</button>
+            <button class="btn-preset" onclick="loadPreset('target_pvp_tank_4piece')">PvP: Tanker 4 Món (2k8 Kháng)</button>
+            <button class="btn-preset" onclick="loadPreset('target_pvp_tank_6piece')">PvP: Tanker 6 Món (4k2 Kháng)</button>
+            <button class="btn-preset" onclick="loadPreset('target_pvp_squishy')">PvP: Mục Tiêu Máu Giấy</button>
+        </div>
+    </section>
+
+    <!-- BẢNG ĐIỀU KHIỂN CHỈ SỐ -->
+    <main class="calculator-grid">
+        <!-- CỘT 1: PHE TẤN CÔNG -->
+        <div class="panel panel-attacker">
+            <div class="panel-header">
+                <span class="icon">⚔️</span>
+                <h2>Chỉ Số Phe Tấn Công</h2>
             </div>
-            <div class="search-container">
-                <i class="fa-solid fa-magnifying-glass"></i>
-                <input type="search" id="search-input" placeholder="Tìm kiếm theo tên hoặc mô tả...">
+            <div class="panel-body">
+                <div class="input-field">
+                    <label for="atk_base">Nội / Ngoại Công Cơ Bản:</label>
+                    <input type="number" id="atk_base" value="6008" oninput="runEngine()">
+                </div>
+                <div class="input-field">
+                    <label for="atk_skill">Lực Tấn Công Kỹ Năng:</label>
+                    <input type="number" id="atk_skill" value="0" oninput="runEngine()">
+                </div>
+                <div class="input-field highlight-blue">
+                    <label for="atk_defbreak">Phá Phòng (Armor Break):</label>
+                    <input type="number" id="atk_defbreak" value="2045" oninput="runEngine()">
+                </div>
+                <div class="input-field">
+                    <label for="atk_ignore_def_pct">% Bỏ Qua Phòng Thủ (%):</label>
+                    <input type="number" id="atk_ignore_def_pct" value="0" step="0.1" oninput="runEngine()">
+                </div>
+                <div class="input-field highlight-blue">
+                    <label for="atk_element">Tấn Công Nguyên Tố:</label>
+                    <input type="number" id="atk_element" value="2418" oninput="runEngine()">
+                </div>
+                <div class="input-field highlight-blue">
+                    <label for="atk_element_penetration">Xuyên Kháng Nguyên Tố:</label>
+                    <input type="number" id="atk_element_penetration" value="0" oninput="runEngine()">
+                </div>
+                <div class="input-field">
+                    <label for="atk_crit">Chí Mạng (Crit Point):</label>
+                    <input type="number" id="atk_crit" value="2034" oninput="runEngine()">
+                </div>
+                <div class="input-field">
+                    <label for="atk_crit_dmg_pct">Sát Thương Chí Mạng (%):</label>
+                    <input type="number" id="atk_crit_dmg_pct" value="185" step="0.5" oninput="runEngine()">
+                </div>
+                <div class="input-field">
+                    <label for="atk_hit">Chính Xác (Accuracy):</label>
+                    <input type="number" id="atk_hit" value="1235" oninput="runEngine()">
+                </div>
+                <div class="input-field">
+                    <label for="atk_boss_slayer">Khắc Boss / Khắc Phái (Điểm):</label>
+                    <input type="number" id="atk_boss_slayer" value="3000" oninput="runEngine()">
+                </div>
+                <div class="input-field">
+                    <label for="atk_shield_break">Phá Khiên (Shield Break):</label>
+                    <input type="number" id="atk_shield_break" value="0" oninput="runEngine()">
+                </div>
             </div>
         </div>
 
-        <main id="app-grid">
-            <!-- Các ứng dụng và file sẽ được chèn vào đây bởi JavaScript -->
-        </main>
+        <!-- CỘT 2: PHE PHÒNG THỦ -->
+        <div class="panel panel-defender">
+            <div class="panel-header">
+                <span class="icon">🛡️</span>
+                <h2>Chỉ Số Phe Mục Tiêu</h2>
+            </div>
+            <div class="panel-body">
+                <div class="input-field highlight-red">
+                    <label for="def_armor">Phòng Thủ (Hộ Giáp Nền):</label>
+                    <input type="number" id="def_armor" value="5550" oninput="runEngine()">
+                </div>
+                <div class="input-field highlight-red">
+                    <label for="def_elem_res">Kháng Nguyên Tố:</label>
+                    <input type="number" id="def_elem_res" value="76" oninput="runEngine()">
+                </div>
+                <div class="input-field">
+                    <label for="def_crit_res">Kháng Chí Mạng:</label>
+                    <input type="number" id="def_crit_res" value="1098" oninput="runEngine()">
+                </div>
+                <div class="input-field">
+                    <label for="def_block">Đỡ Đòn (Block):</label>
+                    <input type="number" id="def_block" value="900" oninput="runEngine()">
+                </div>
+                <div class="input-field">
+                    <label for="def_boss_res">Thủ Lĩnh Kháng / Kháng Phái:</label>
+                    <input type="number" id="def_boss_res" value="3000" oninput="runEngine()">
+                </div>
+                <div class="input-field">
+                    <label for="def_qi_shield">Khiên Khí / Khí Thuẫn:</label>
+                    <input type="number" id="def_qi_shield" value="586" oninput="runEngine()">
+                </div>
+                <div class="input-field">
+                    <label for="def_perfect_block_pct">% Chống Đỡ Hoàn Mỹ (%):</label>
+                    <input type="number" id="def_perfect_block_pct" value="0" step="0.5" oninput="runEngine()">
+                </div>
+                <div class="input-field">
+                    <label for="def_dmg_reduction_pct">% Kháng Độc Lập / Giảm Thương:</label>
+                    <input type="number" id="def_dmg_reduction_pct" value="0" step="0.5" oninput="runEngine()">
+                </div>
+            </div>
+        </div>
 
-        <footer>
-            <p>&copy; 2025 Your Company. All Rights Reserved.</p>
-        </footer>
-    </div>
+        <!-- CỘT 3: HỆ SỐ KHUẾCH ĐẠI -->
+        <div class="panel panel-multipliers">
+            <div class="panel-header">
+                <span class="icon">⚡</span>
+                <h2>Hệ Số Chiêu & Khắc Phái</h2>
+            </div>
+            <div class="panel-body">
+                <div class="input-field">
+                    <label for="mul_skill_pct">Hệ Số Kỹ Năng (% Skill):</label>
+                    <input type="number" id="mul_skill_pct" value="100" step="5" oninput="runEngine()">
+                </div>
+                <div class="input-field highlight-gold">
+                    <label for="mul_boss_pct">% Khắc Boss / % Khắc Phái:</label>
+                    <input type="number" id="mul_boss_pct" value="0" step="0.5" oninput="runEngine()">
+                </div>
+                <div class="input-field">
+                    <label for="mul_enhance_pct">% Cường Hóa Kỹ Năng / PvE:</label>
+                    <input type="number" id="mul_enhance_pct" value="0" step="0.5" oninput="runEngine()">
+                </div>
+                <div class="input-field">
+                    <label for="mul_indep1_pct">Hệ Số Độc Lập 1 (Buff %):</label>
+                    <input type="number" id="mul_indep1_pct" value="0" step="0.5" oninput="runEngine()">
+                </div>
+                <div class="input-field">
+                    <label for="mul_indep2_pct">Hệ Số Độc Lập 2 (Buff %):</label>
+                    <input type="number" id="mul_indep2_pct" value="0" step="0.5" oninput="runEngine()">
+                </div>
 
-    <script src="script.js"></script>
+                <div class="panel-action">
+                    <button class="btn-refresh" onclick="runEngine()">🔄 CẬP NHẬT KẾT QUẢ</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- KHU VỰC KẾT QUẢ HIỂN THỊ -->
+    <section class="results-dashboard">
+        <!-- TỔNG SÁT THƯƠNG KỲ VỌNG & SO SÁNH BUILD -->
+        <div class="hero-metric-card">
+            <div class="hero-title">
+                <h3>SÁT THƯƠNG KỲ VỌNG (EXPECTED DAMAGE)</h3>
+                <p>Đã tính toán chuẩn xác tỷ lệ Trúng, Bị Đỡ và Đường cong nổ Bạo kích 938</p>
+            </div>
+            <div class="hero-result-group">
+                <div class="hero-value" id="display_expected_dmg">0</div>
+                <!-- Hiển thị chênh lệch khi so sánh với mốc đã lưu -->
+                <div class="diff-badge" id="display_diff_dmg" style="display: none;">+0 (+0%)</div>
+            </div>
+        </div>
+
+        <!-- BẢNG ĐIỀU KHIỂN SO SÁNH (COMPARE BAR) -->
+        <div class="compare-control-bar">
+            <div class="compare-info">
+                <span id="compare_status_text">Chưa ghim mốc so sánh. Bạn có thể ghim cấu hình hiện tại làm mốc chuẩn (A) để đối chiếu khi đổi đồ (B).</span>
+            </div>
+            <div class="compare-buttons">
+                <button class="btn btn-compare" onclick="setBaselineForCompare()">📌 Ghim Build Này Làm Chuẩn</button>
+                <button class="btn btn-compare btn-clear" id="btn_clear_baseline" style="display: none;" onclick="clearBaseline()">Bỏ Ghim</button>
+                <button class="btn btn-compare" onclick="copyReportText()">📋 Sao Chép Báo Cáo</button>
+            </div>
+        </div>
+
+        <!-- CÁC CHỈ SỐ THÀNH PHẦN -->
+        <div class="metrics-grid">
+            <div class="metric-box">
+                <span class="m-label">Đòn Trúng Thường</span>
+                <span class="m-val" id="display_hit_normal">0</span>
+            </div>
+            <div class="metric-box m-gold">
+                <span class="m-label">Khi Nổ Bạo Kích</span>
+                <span class="m-val" id="display_hit_crit">0</span>
+            </div>
+            <div class="metric-box m-red">
+                <span class="m-label">Khi Bị Đỡ Đòn</span>
+                <span class="m-val" id="display_hit_blocked">0</span>
+            </div>
+            <div class="metric-box m-green">
+                <span class="m-label">Tỷ Lệ Bạo Kích Thực</span>
+                <span class="m-val" id="display_crit_rate">0%</span>
+            </div>
+            <div class="metric-box">
+                <span class="m-label">Tỷ Lệ Đánh Trúng</span>
+                <span class="m-val" id="display_hit_rate">0%</span>
+            </div>
+            <div class="metric-box">
+                <span class="m-label">% Giảm Thương Giáp</span>
+                <span class="m-val" id="display_dr_phys">0%</span>
+            </div>
+            <div class="metric-box">
+                <span class="m-label">% Giảm Thương Nguyên Tố</span>
+                <span class="m-val" id="display_dr_elem">0%</span>
+            </div>
+            <div class="metric-box">
+                <span class="m-label">Tỷ Trọng ST Nguyên Tố</span>
+                <span class="m-val" id="display_elem_share">0%</span>
+            </div>
+        </div>
+
+        <!-- BÁO CÁO TỐI ƯU HÓA THÔNG MINH -->
+        <div class="advisor-box">
+            <div class="advisor-header">
+                <span class="icon">💡</span>
+                <h4>Chẩn Đoán Xây Dựng Nhân Vật (Build Diagnostics)</h4>
+            </div>
+            <div class="advisor-content" id="display_diagnostics">
+                <!-- Nội dung được nạp tự động từ script.js -->
+            </div>
+        </div>
+    </section>
+</div>
+
+<!-- TOAST THÔNG BÁO TIỆN ÍCH -->
+<div id="toast_msg" class="toast">Đã thực hiện thành công!</div>
+
+<script src="script.js"></script>
 </body>
 </html>
